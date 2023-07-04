@@ -1,0 +1,7 @@
+https://youtu.be/1RHDhtbqo94?t=3996
+
+Cross-Origin-Opener-Policy policy would block the window.postMessage call.
+
+POST https://play.google.com/log?hasfast=true&authuser=0&format=json net::ERR_BLOCKED_BY_CLIENT
+
+Unable to solve
