@@ -7,7 +7,7 @@ export const client = createClient({
     apiVersion: '2023-07-04',
     useCdn: true,
     token: process.env.REACT_APP_SANITY_TOKEN,
-    origin: 'http://localhost:3000',
+
 });
 
 const builder = imageUrlBuilder(client);
