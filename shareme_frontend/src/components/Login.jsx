@@ -11,26 +11,25 @@ const Login = () => {
   const navigate = useNavigate();
 
   const responseGoogle = (response) => {
-      
-    const decodedToken = jwt_decode(response.credential); 
-
-    console.log(decodedToken)
+    const decodedToken = jwt_decode(response.credential);
+  
     if (decodedToken) {
       const { name, sub: googleId, picture: imageUrl } = decodedToken;
-
+  
+      localStorage.setItem('user', JSON.stringify(decodedToken)); // Set 'user' in localStorage to the JSON string representation of the decoded token      
+      
       const doc = {
         _id: googleId,
         _type: 'user',
         userName: name,
         image: imageUrl,
       };
-
-    client.createIfNotExists(doc).then(() => {
-      navigate('/');
-    });
       
+      client.createIfNotExists(doc).then(() => {
+        navigate('/');
+      });
     }
-  };
+  };    
 
   return (
     <div className='flex justify-center items-center flex-col h-screen'>
