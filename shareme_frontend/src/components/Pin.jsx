@@ -14,7 +14,6 @@ const Pin = ({pin: {postedBy, image, _id, name, description, comments, likes, po
 
   const navigate = useNavigate()
   const user = fetchUser()
-  console.log('postedBy:', postedBy._id)
 
   const alreadySaved = save?.filter((item) => item?.postedBy?._id === user.googleId)?.length;
 
