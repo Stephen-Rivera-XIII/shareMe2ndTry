@@ -1,47 +1,60 @@
-import React, { useState} from 'react'
-import { Link, useNavigate } from 'react-router-dom'
-import { v4 as uuidv4 } from 'uuid'
-import  {MdDownloadForOffline} from 'react-icons/md'
-import {AiTwotoneDelete} from 'react-icons/ai'
-import { BsFillArrowUpRightCircleFill } from 'react-icons/bs'
+import React, { useState } from 'react';
+import { Link, useNavigate } from 'react-router-dom';
+import { v4 as uuidv4 } from 'uuid';
+import { MdDownloadForOffline } from 'react-icons/md';
+import { AiTwotoneDelete } from 'react-icons/ai';
+import { BsFillArrowUpRightCircleFill } from 'react-icons/bs';
 
-import { client, urlFor  } from '../client'
-import { fetchUser } from '../utils/fetchUser'
+import { client, urlFor } from '../client';
+import { fetchUser } from '../utils/fetchUser';
 
-const Pin = ({pin: {postedBy, image, _id, name, description, comments, likes, postedAt, save, destination}}) => {
+const Pin = ({ pin: { postedBy, image, _id, name, description, comments, likes, postedAt, save, destination } }) => {
+  const [postHovered, setPostHovered] = useState(false);
 
-  const [postHovered, setPostHovered] = useState(false)
+  const navigate = useNavigate();
+  const user = fetchUser();
 
-  const navigate = useNavigate()
-  const user = fetchUser()
+  const alreadySaved = save?.filter((item) => item?.postedBy?._id === (user?.googleId || ''))?.length;
 
-  const alreadySaved = save?.filter((item) => item?.postedBy?._id === user.googleId)?.length;
-
-  const savePin = (id)=>{
-    if(!alreadySaved){
-      client.patch(id)
-      .setIfMissing({save: []})
-      .insert('after', 'save[-1]', [{
-        _key: uuidv4(),
-        userId: user.googleId,
-        postedBy: {
-          _type: 'postedBy',
-          _ref: user.googleId
-        }
-      }])
-      .commit()
-      .then(()=>{
-        window.location.reload()
-      })
+  const savePin = (id) => {
+    if (!alreadySaved) {
+      if (!user) {
+        navigate('/login');
+        return;
+      }
+      client
+        .patch(id)
+        .setIfMissing({ save: [] })
+        .insert('after', 'save[-1]', [
+          {
+            _key: uuidv4(),
+            userId: user?.googleId || '',
+            postedBy: {
+              _type: 'postedBy',
+              _ref: user?.googleId || '',
+            },
+          },
+        ])
+        .commit()
+        .then(() => {
+          window.location.reload();
+        });
     }
-  }
+  };
 
-  const deletePin = (id)=>{
-    client.delete(id)
-    .then(()=>{
-      window.location.reload()
-    })
-  }
+  const deletePin = (id) => {
+    client.delete(id).then(() => {
+      window.location.reload();
+    });
+  };
+
+  const handlePostClick = () => {
+    if (!user) {
+      navigate('/login');
+      return;
+    }
+    navigate(`/pin-detail/${_id}`);
+  };
 
 
 
