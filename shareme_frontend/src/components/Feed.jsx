@@ -34,6 +34,10 @@ const Feed = () => {
       <Spinner message={`We are adding ${ideaName} ideas to your feed!`} />
     );
   }
+
+  if(!pins?.length) {
+    return <h2>No Pins Found</h2>
+  }
   return (
     <div>
       {pins && (
