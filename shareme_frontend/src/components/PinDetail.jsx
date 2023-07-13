@@ -38,23 +38,36 @@ const PinDetail = ({ user }) => {
   const addComment = () => {
     if (comment) {
       setAddingComment(true);
-  
+
       client
         .patch(pinId)
         .setIfMissing({ comments: [] })
-        .insert('after', 'comments[-1]', [{ comment, _key: uuidv4(), postedBy: { _type: 'postedBy', _ref: user?._id } }])
+        .insert('after', 'comments[-1]', [
+          {
+            comment,
+            _key: uuidv4(),
+            postedBy: { _type: 'postedBy', _ref: user?._id }
+          }
+        ])
         .commit()
         .then(() => {
           setPinDetail((prevPinDetail) => {
-            const newComment = { comment, _key: uuidv4(), postedBy: { _type: 'postedBy', _ref: user?._id } };
-            const updatedComments = [...prevPinDetail.comments, newComment];
+            const newComment = {
+              comment,
+              _key: uuidv4(),
+              postedBy: { _type: 'postedBy', _ref: user?._id }
+            };
+            const updatedComments = [...(prevPinDetail.comments || []), newComment];
             return { ...prevPinDetail, comments: updatedComments };
           });
           setComment('');
           setAddingComment(false);
+          window.location.reload(true); // Perform hard reload
         });
     }
-  };  
+  };
+
+  
 
   if (!pinDetail) {
     return (
